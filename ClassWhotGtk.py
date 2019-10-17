@@ -219,8 +219,6 @@ class WhotGtk(images):
         _ball_lab.bind(self._played, "Played Cards")
         #####################################################################################
 
-        #for i in self._buts2:
-        #    i.bind("<Any-ButtonRelease>", self.__CompPlayEngine)
         ####################################################################################
         # Who Plays First
         ####################################################################################
@@ -422,7 +420,7 @@ class WhotGtk(images):
                         #self._P2one()
                         #self._P2hold_on()
                         if labref[1][1] == 20:
-                        #    self.Window('whot')
+                            pass
                         #elif self._whot.PlayedCards()[len(self._whot.PlayedCards())-1][1][1] == 20:
                         #    if self._var.get() in self._values:
                         #        if labref[1][0] != self._var.get():
