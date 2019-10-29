@@ -18,9 +18,9 @@ class Whot(images):
         if self.PlayedCards()[len(self.PlayedCards())-1][1][1] == 20:
             try:
                 misc_cards = []
-                for i in Whot.Cards[0], Whot.Cards[1], Whot.Cards[2], Whot.Cards[3]:
-                    misc_cards.append(i)
-                    Whot.Cards.remove(i)
+                for i in range(4):
+                    misc_cards.append(Whot.Cards[i])
+                    Whot.Cards.pop(i)
                 shuffle(misc_cards)
                 self.PlayedCards().append(choice(misc_cards))
                 self.NormCards()
@@ -33,20 +33,21 @@ class Whot(images):
         'Initialize player cards and Starting (played) cards'
         self._startcard1 = []
         self._startcard2 = []
-        for i in Whot.Cards[0], Whot.Cards[1], Whot.Cards[2], Whot.Cards[3], Whot.Cards[4]:
-            self._startcard1.append(i)
-            Whot.Cards.remove(i)
-        for i in Whot.Cards[5], Whot.Cards[6], Whot.Cards[7], Whot.Cards[8], Whot.Cards[9]:
-            self._startcard2.append(i)
-            Whot.Cards.remove(i)
-        self.PlayedCards().append(Whot.Cards[10])
-        Whot.Cards.pop(10)
+        for i in range(5):
+            self._startcard1.append(Whot.Cards[i])
+            Whot.Cards.pop(i)
+        for i in range(5):
+            self._startcard2.append(Whot.Cards[i])
+            Whot.Cards.pop(i)
+        _card = choice(Whot.Cards)
+        self.PlayedCards().append(_card)
+        Whot.Cards.remove(_card)
         #self._completed = []
         pass
 
     def LoopDepot(self):
-        'Loops depot cards if they are less than or equal to 14'
-        if len(Whot.Cards) <= 14:
+        'Loops depot cards if they are less than or equal to 2'
+        if len(Whot.Cards) <= 2:
             self.InitDepot()
 
 
@@ -129,14 +130,10 @@ class Computer(Whot):
     def gomart(self):
         'Sends Player1 to Market'
         self.LoopDepot()
-        self.cards().append(Whot.Cards[11])
-        Whot.Cards.remove(Whot.Cards[11])
+        _card = choice(Whot.Cards)
+        self.cards().append(_card)
+        Whot.Cards.remove(_card)
 
-    def gogenmart(self):
-        "General market"
-        self.LoopDepot()
-        self.cards().append(Whot.Cards[12])
-        Whot.Cards.remove(Whot.Cards[12])
 
 class Player2(Whot):
     'Objects and attributes for Player2'
@@ -193,14 +190,10 @@ class Player2(Whot):
     def gomart(self):
         "Sends player2 to market"
         self.LoopDepot()
-        self.cards().append(Whot.Cards[13])
-        Whot.Cards.remove(Whot.Cards[13])
+        _card = choice(Whot.Cards)
+        self.cards().append(_card)
+        Whot.Cards.remove(_card)
 
-    def gogenmart(self):
-        "Gen market"
-        self.LoopDepot()
-        self.cards().append(Whot.Cards[14])
-        Whot.Cards.remove(Whot.Cards[14])
 
 class WhotException(Exception):
     "Exception for the Whot class"
@@ -214,7 +207,6 @@ class WhotException(Exception):
 if __name__ == '__main__':
     yap = tk.Tk()
     app = Whot()
-    #app.Init()
     app.InitDepot()
     app.InitPlayerCards()
     app.InitComputerCards()
@@ -225,4 +217,3 @@ if __name__ == '__main__':
     pc1 = p1.ComputerCards
     pc2 = p2.Player2Cards
     
-    #WG(yap)
