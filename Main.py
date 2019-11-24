@@ -18,14 +18,13 @@ class Whot(images):
         if self.PlayedCards()[len(self.PlayedCards())-1][1][1] == 20:
             try:
                 misc_cards = []
-                for i in range(4):
-                    misc_cards.append(Whot.Cards[i])
-                    Whot.Cards.pop(i)
+                for i in Whot.Cards[0], Whot.Cards[1], Whot.Cards[2], Whot.Cards[3]:
+                    misc_cards.append(i)
+                    Whot.Cards.remove(i)
                 shuffle(misc_cards)
                 self.PlayedCards().append(choice(misc_cards))
                 self.NormCards()
             except:
-                #self.NormCards()
                 pass
             
         
@@ -33,21 +32,20 @@ class Whot(images):
         'Initialize player cards and Starting (played) cards'
         self._startcard1 = []
         self._startcard2 = []
-        for i in range(5):
-            self._startcard1.append(Whot.Cards[i])
-            Whot.Cards.pop(i)
-        for i in range(5):
-            self._startcard2.append(Whot.Cards[i])
-            Whot.Cards.pop(i)
-        _card = choice(Whot.Cards)
-        self.PlayedCards().append(_card)
-        Whot.Cards.remove(_card)
+        for i in Whot.Cards[0], Whot.Cards[1], Whot.Cards[2], Whot.Cards[3], Whot.Cards[4]:
+            self._startcard1.append(i)
+            Whot.Cards.remove(i)
+        for i in Whot.Cards[5], Whot.Cards[6], Whot.Cards[7], Whot.Cards[8], Whot.Cards[9]:
+            self._startcard2.append(i)
+            Whot.Cards.remove(i)
+        self.PlayedCards().append(Whot.Cards[10])
+        Whot.Cards.pop(10)
         #self._completed = []
         pass
 
     def LoopDepot(self):
-        'Loops depot cards if they are less than or equal to 2'
-        if len(Whot.Cards) <= 2:
+        'Loops depot cards if they are less than or equal to 14'
+        if len(Whot.Cards) <= 14:
             self.InitDepot()
 
 
@@ -79,12 +77,12 @@ class Computer(Whot):
     'Objects and attributes for Player1'
     def __init__(self):
         super().__init__()
-        self._compup2=[0]
-        self._compup8=[0]
-        self._compup1=[0]
-        self._compup14=[0]
-        self._compup20=[0]
-        
+        self.compup2=[0]
+        self.compup8=[0]
+        self.compup1=[0]
+        self.compup14=[0]
+        self.compup20=[0]
+
     def play(self, playcard):
         'Player1 Plays a valid card in his/her cardstack'
         self.LoopDepot()
@@ -94,19 +92,19 @@ class Computer(Whot):
                playcard[1][1] == 20 or self.PlayedCards()[len(self.PlayedCards())-1][1][1] == 20:
                 print(playcard[1], "Has been played")
                 if playcard[1][1] == 2:
-                    self._compup2.insert(0,2)
+                    self.compup2.insert(0,2)
                     print('Pick Two Cards')
                 elif playcard[1][1] == 1:
-                    self._compup1.insert(0,1)
+                    self.compup1.insert(0,1)
                     print('Hold On')
                 elif playcard[1][1] == 8:
-                    self._compup8.insert(0,8)
+                    self.compup8.insert(0,8)
                     print("Hold On")
                 elif playcard[1][1] == 14:
-                    self._compup14.insert(0,14)
+                    self.compup14.insert(0,14)
                     print("General Market")
                 elif playcard[1][1] == 20:
-                    self._compup20.insert(0,20)
+                    self.compup20.insert(0,20)
                     print('Ask for a card...')
                 self.PlayedCards().append(playcard)
                 self.cards().remove(playcard)
@@ -114,14 +112,11 @@ class Computer(Whot):
                     print("Last Card")
                 elif len(self.cards()) == 0:
                     print("Checkmate.....!")
-                    #exit()
                 return True
             else:
                 raise WhotException("Error: Invalid Move!")
-                #return False
         else:
             raise WhotException("Error: Playcard is not in your cardstack!")
-            #return False
 
     def cards(self):
         "returns player1's (computer) cards"
@@ -130,20 +125,27 @@ class Computer(Whot):
     def gomart(self):
         'Sends Player1 to Market'
         self.LoopDepot()
-        _card = choice(Whot.Cards)
-        self.cards().append(_card)
-        Whot.Cards.remove(_card)
+        self.cards().append(Whot.Cards[11])
+        Whot.Cards.remove(Whot.Cards[11])
 
+    def gogenmart(self):
+        "General market"
+        self.LoopDepot()
+        self.cards().append(Whot.Cards[12])
+        Whot.Cards.remove(Whot.Cards[12])
 
 class Player2(Whot):
     'Objects and attributes for Player2'
     def __init__(self):
         super().__init__()
-        self._player2up2=[0]
-        self._player2up1=[0]
-        self._player2up8=[0]
-        self._player2up14=[0]
-        self._player2up20=[0]
+        self.player2up2=[0]
+        self.player2up1=[0]
+        self.player2up8=[0]
+        self.player2up14=[0]
+        self.player2up20=[0]
+        
+        self.check_requested = None
+        self.request = None
         
     def play(self, playcard):
         'Player2 Plays a valid card in his/her cardstack'
@@ -152,36 +154,38 @@ class Player2(Whot):
             if playcard[1][0] == self.PlayedCards()[len(self.PlayedCards())-1][1][0] or\
                playcard[1][1] == self.PlayedCards()[len(self.PlayedCards())-1][1][1] or\
                playcard[1][1] == 20 or self.PlayedCards()[len(self.PlayedCards())-1][1][1] == 20:
+                if self.check_requested:
+                    if self.request != playcard[1][0] and playcard[1][1] != 20:
+                        raise WhotException("Concur to your opponents request")
                 print(playcard[1], "Has been played")
                 if playcard[1][1] == 2:
-                    self._player2up2.insert(0,2)
+                    self.player2up2.insert(0,2)
                     print('Pick Two Cards')
                 elif playcard[1][1] == 1:
-                    self._player2up1.insert(0,1)
+                    self.player2up1.insert(0,1)
                     print('Hold On')
                 elif playcard[1][1] == 8:
-                    self._player2up8.insert(0,8)
+                    self.player2up8.insert(0,8)
                     print("Hold On")
                 elif playcard[1][1] == 14:
-                    self._player2up14.insert(0,14)
+                    self.player2up14.insert(0,14)
                     print("General Market")
                 elif playcard[1][1] == 20:
-                    self._player2up20.insert(0,20)
+                    self.player2up20.insert(0,20)
                     print('Ask for a card...')
                 self.PlayedCards().append(playcard)
                 self.cards().remove(playcard)
+                self.check_requested = None
+                self._request = None
                 if len(self.cards()) == 1:
                     print("Last Card")
                 elif len(self.cards()) == 0:
                     print("Checkmate.....!")
-                    #exit()
                 return True
             else:
                 raise WhotException("Error: Invalid Move!")
-                #return False
         else:
             raise WhotException("Error: Playcard is not in your cardstack!")
-            #return False
 
     def cards(self):
         "returns Player2's cards"
@@ -190,10 +194,14 @@ class Player2(Whot):
     def gomart(self):
         "Sends player2 to market"
         self.LoopDepot()
-        _card = choice(Whot.Cards)
-        self.cards().append(_card)
-        Whot.Cards.remove(_card)
+        self.cards().append(Whot.Cards[13])
+        Whot.Cards.remove(Whot.Cards[13])
 
+    def gogenmart(self):
+        "Gen market"
+        self.LoopDepot()
+        self.cards().append(Whot.Cards[14])
+        Whot.Cards.remove(Whot.Cards[14])
 
 class WhotException(Exception):
     "Exception for the Whot class"
@@ -207,6 +215,7 @@ class WhotException(Exception):
 if __name__ == '__main__':
     yap = tk.Tk()
     app = Whot()
+    #app.Init()
     app.InitDepot()
     app.InitPlayerCards()
     app.InitComputerCards()
@@ -217,3 +226,4 @@ if __name__ == '__main__':
     pc1 = p1.ComputerCards
     pc2 = p2.Player2Cards
     
+    #WG(yap)
