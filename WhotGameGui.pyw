@@ -251,16 +251,6 @@ class WhotGtk(images):
             self._mark_but.config(bg=self._themes_dict.get(color))
             self._hover_comp.config(fg=self._themes_dict.get(color))
             self._hover_p2.config(fg=self._themes_dict.get(color))
-        #else:
-        #    for i in self._labs_comp:
-        #        i.config(bg=None)
-        #    for i in self._buts2:
-        #        i.config(bg=None)
-        #    self._played.config(bg=None)
-        #    self._mark_but.config(bg=None)
-        #    self._hover_comp.config(fg=None)
-        #    self._hover_p2.config(fg=None)
-        
 
     def _player_turn(self, player):
         """Return bool value for the valid player to play first or next"""
