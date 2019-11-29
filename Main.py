@@ -176,7 +176,7 @@ class Player2(Whot):
                 self.PlayedCards().append(playcard)
                 self.cards().remove(playcard)
                 self.check_requested = None
-                self._request = None
+                self.request = None
                 if len(self.cards()) == 1:
                     print("Last Card")
                 elif len(self.cards()) == 0:
