@@ -300,6 +300,7 @@ class WhotGtk(images):
         name_entry.pack()
         ok_button = tk.Button(top, text='Ok', command=lambda: self._destroy(top, ent_var))
         ok_button.pack()
+        tk.Label(top, text='Restart game to effect changes').pack()
         pass
     
     def _player_turn(self, player):
