@@ -16,13 +16,21 @@ class WhotGtk(images):
     """Naija Whot Game in Grand Style"""
     def __init__(self):
         self._root = Pmw.initialise()
+        #self._root.geometry('1367x685')
         self._root.geometry('790x685')
         self._root.title('Whot Game')
         super().__init__()
-        self._player2_frame = Pmw.ScrolledFrame(self._root, labelpos='s', usehullsize=1,
+        try:
+            read_name = open('./name_config.gen', 'r')
+            self._player2_frame = Pmw.ScrolledFrame(self._root, labelpos='s', usehullsize=1,
                                                 hull_width=100,
                                                 hull_height=225,
-                                                label_text='PLAYER  =>')
+                                                label_text=read_name.read().upper())
+        except Exception as e:
+            self._player2_frame = Pmw.ScrolledFrame(self._root, labelpos='s', usehullsize=1,
+                                                hull_width=100,
+                                                hull_height=225,
+                                                label_text='PLAYER =>')
 
         self._played_cards_frame = tk.Frame(self._root, bg='aquamarine')
 
@@ -85,13 +93,15 @@ class WhotGtk(images):
         self._found_num = []
         self._found_20 = []
         self._found_request = []
-        ####################################################################
         
+        ####################################################################
+        # Request
+        #####################################################################
         self._player2_request = None
         #####################################################################
 
         ######################################################################
-        # Initialisation of Buts and Labs
+        # Initialisation of Buttons and Labels
         ######################################################################
         self._labs_comp = []
         for i in range(20):
@@ -103,7 +113,7 @@ class WhotGtk(images):
         #######################################################################
 
         #############################################################################################################
-        # Player2 Buttons, Butrefs And Callbacks
+        # Initialize and Display Player2 Buttons and Sync with their Button references (Butrefs)
         #############################################################################################################
         self._p2_buts = {}
         for i in range(20):
@@ -136,7 +146,7 @@ class WhotGtk(images):
         ###########################################################################################################
 
         #####################################################################################
-        # Played card and Mark card Image
+        # Display Played card and Mark card Image
         #####################################################################################
         self._played = tk.Label(self._played_cards_frame,
                                 image=self._whot.PlayedCards()[len(self._whot.PlayedCards()) - 1][0])
@@ -146,7 +156,7 @@ class WhotGtk(images):
         #####################################################################################
 
         ####################################################################################
-        # Computer Labs
+        # Initialize and Display Computer Labels and Sync with their Label references (Labrefs)
         ####################################################################################
         self._complab_ref = {}
 
@@ -170,14 +180,22 @@ class WhotGtk(images):
         game_menu = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label='Game', menu=game_menu)
         game_menu.add_command(label='Restart Game', accelerator='Ctrl+R', compound='left', command=self.__restart)
+        game_menu.add_command(label='Change name', accelerator='Ctrl+N', compound='left', command=self._set_name)
         
         theme_menu = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label='Themes', menu=theme_menu)
         
-        theme_menu.add_radiobutton(label='green', command=lambda: self._themes('green'))
+        theme_menu.add_radiobutton(label='yellow', command=lambda: self._themes('yellow'))
         theme_menu.add_radiobutton(label='blue', command=lambda: self._themes('blue'))
+        theme_menu.add_radiobutton(label='red', command=lambda: self._themes('red'))
         theme_menu.add_radiobutton(label='aquamarine', command=lambda: self._themes('aquamarine'))
-        #theme_menu.add_radiobutton(label='None', command=lambda: self._themes(None))
+        theme_menu.add_radiobutton(label='green', command=lambda: self._themes('green'))        
+        theme_menu.add_radiobutton(label='magenta', command=lambda: self._themes('magenta'))
+        theme_menu.add_radiobutton(label='gold', command=lambda: self._themes('gold'))        
+        theme_menu.add_radiobutton(label='dark violet', command=lambda: self._themes('dark violet'))
+        theme_menu.add_radiobutton(label='pink', command=lambda: self._themes('pink'))
+        theme_menu.add_radiobutton(label='black', command=lambda: self._themes('black'))
+        theme_menu.add_radiobutton(label='None', command=lambda: self._themes('none'))
         self._root.config(menu=menu_bar)
 
         ####################################################################################
@@ -205,6 +223,7 @@ class WhotGtk(images):
         ##################################################################################
         self._root.bind_all("<Control-m>", self.Manual)
         self._root.bind_all("<Control-r>", self.__restart)
+        self._root.bind_all("<Control-n>", self._set_name)
         self._root.bind_all("<Return>", self._p2_mark)
         ####################################################################################
         # Balloon Bindings and Inits
@@ -235,12 +254,14 @@ class WhotGtk(images):
         print(final_choice)
         pass
         ####################################################################################
-
         self._root.after(900, self.__CompPlayEngine)
+        self._read_theme_conf()
         
     def _themes(self, color):
         """Change the theme of the game windows"""
-        self._themes_dict = {'green':'light sea green', 'blue':'DeepSkyBlue2', 'aquamarine': 'Aquamarine'}
+        self._themes_dict = {'green':'green yellow', 'blue':'DeepSkyBlue2', 'aquamarine': 'Aquamarine', 'none':'white',
+                             'yellow':'yellow', 'magenta':'magenta', 'gold':'gold', 'red':'red', 'dark violet':'dark violet',
+                             'pink':'pink', 'black':'black'}
         
         if color in self._themes_dict:
             for i in self._labs_comp:
@@ -251,7 +272,36 @@ class WhotGtk(images):
             self._mark_but.config(bg=self._themes_dict.get(color))
             self._hover_comp.config(fg=self._themes_dict.get(color))
             self._hover_p2.config(fg=self._themes_dict.get(color))
-
+            if color == 'none':
+                self._hover_comp.config(fg='black')
+                self._hover_p2.config(fg='black')
+            self._write_to_theme_conf(self._themes_dict.get(color))
+        else:
+            self._write_to_theme_conf('None')
+        
+    def _write_to_theme_conf(self, theme):
+        with open('./theme_config.gen', 'w+') as conf:
+            conf.write(str(theme))
+        return None
+    
+    def _read_theme_conf(self):
+        try:
+            with open('./theme_config.gen', 'r') as conf:
+                self._themes(conf.read())
+        except:
+            pass
+        return None
+    
+    def _set_name(self):
+        top = tk.Toplevel(self._root)
+        top.title("Set Name")
+        ent_var = tk.StringVar()
+        name_entry = tk.Entry(top, width=30, textvariable=ent_var)
+        name_entry.pack()
+        ok_button = tk.Button(top, text='Ok', command=lambda: self._destroy(top, ent_var))
+        ok_button.pack()
+        pass
+    
     def _player_turn(self, player):
         """Return bool value for the valid player to play first or next"""
         if player:
@@ -638,41 +688,50 @@ class WhotGtk(images):
         _toplev.geometry('{}x{}+{}+{}'.format(230, 480, 400, 100)) 
         _toplev.title("Ask for a card")
         _toplev.resizable(False, False)
+        try:
+            file = open('./theme_config.gen', 'r')
+            theme = file.read()
+        except:
+            pass
         cross_bt = tk.Button(_toplev, image=self._cross_icon)
-        cross_bt.config(command=lambda: self._clicked_card('cross', _toplev))
+        cross_bt.config(command=lambda: self._clicked_card('cross', _toplev), bg=theme)
         cross_bt.grid(row=0, column=0, pady=3)
 
         circle_bt = tk.Button(_toplev, image=self._circle_icon)
-        circle_bt.config(command=lambda: self._clicked_card('circle', _toplev))
+        circle_bt.config(command=lambda: self._clicked_card('circle', _toplev), bg=theme)
         circle_bt.grid(row=1, column=0, pady=3)
 
         star_bt = tk.Button(_toplev, image=self._star_icon)
-        star_bt.config(command=lambda: self._clicked_card('star', _toplev))
+        star_bt.config(command=lambda: self._clicked_card('star', _toplev), bg=theme)
         star_bt.grid(row=2, column=0, pady=3)
 
         triangle_bt = tk.Button(_toplev, image=self._triangle_icon)
-        triangle_bt.config(command=lambda: self._clicked_card('triangle', _toplev))
+        triangle_bt.config(command=lambda: self._clicked_card('triangle', _toplev), bg=theme)
         triangle_bt.grid(row=3, column=0, pady=3)
 
         square_bt = tk.Button(_toplev, image=self._square_icon)
-        square_bt.config(command=lambda: self._clicked_card('square', _toplev))
+        square_bt.config(command=lambda: self._clicked_card('square', _toplev), bg=theme)
         square_bt.grid(row=4, column=0, pady=3)
 
-        tk.Label(_toplev, text='cross').grid(row=0, column=1,)
-        tk.Label(_toplev, text='circle').grid(row=1, column=1,)
-        tk.Label(_toplev, text='star').grid(row=2, column=1,)
-        tk.Label(_toplev, text='triangle').grid(row=3, column=1,)
-        tk.Label(_toplev, text='square').grid(row=4, column=1,)
+        tk.Label(_toplev, text='cross', fg=theme).grid(row=0, column=1,)
+        tk.Label(_toplev, text='circle', fg=theme).grid(row=1, column=1,)
+        tk.Label(_toplev, text='star', fg=theme).grid(row=2, column=1,)
+        tk.Label(_toplev, text='triangle', fg=theme).grid(row=3, column=1,)
+        tk.Label(_toplev, text='square', fg=theme).grid(row=4, column=1,)
         
-        lab = tk.Label(_toplev, text='click your desired button\n to choose a card'.upper())
+        lab = tk.Label(_toplev, text='click your desired button\n to choose a card'.upper(), fg=theme)
         lab.grid(row=5, column=1, sticky='e')
         for i in self._buts2:
             i.config(state='disabled')
         self._mark_but.config(state='disabled')
         _toplev.protocol('WM_DELETE_WINDOW', lambda: self._destroy(_toplev))
         _toplev.focus_set()
+        file.close()
 
-    def _destroy(self, root=None):
+    def _destroy(self, root=None, name=None):
+        if name:
+            with open('./name_config.gen', 'w+') as f:
+                f.write(name.get())
         for i in self._buts2:
             i.config(state='normal')
         self._mark_but.config(state='normal')
