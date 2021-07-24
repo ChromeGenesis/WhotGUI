@@ -13,7 +13,6 @@ class images:
         self._circle12 = tk.PhotoImage(file=".//DIY//Circle//Circle_12.png")
         self._circle13 = tk.PhotoImage(file=".//DIY//Circle//Circle_13.png")
         self._circle14 = tk.PhotoImage(file=".//DIY//Circle//Circle_14.png")
-    
 
         self._triangle1 = tk.PhotoImage(file=".//DIY//Triangle/Triangle_1.png")
         self._triangle2 = tk.PhotoImage(file=".//DIY//Triangle/Triangle_2.png")
