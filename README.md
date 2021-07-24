@@ -9,3 +9,8 @@ Located in the menu for how to play and other rules
 * Added new themes 
 * Added name entry for customization
 * Upgraded look and feel
+
+# Usage
+* git clone https://github.com/ChromeGenesis/WhotGUI/
+* cd WhotGUI
+* python3 ClassWhotGtk.pyw
