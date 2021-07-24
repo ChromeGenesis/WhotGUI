@@ -1234,6 +1234,7 @@ class WhotGtk(images):
             sys.exit()
             
     def _norm_cards(self):
+        """Adds one more container/Button/Label after they have been all used up or exhausted"""
         full_containers = []
         for o, i in enumerate(self._but_refs):
             if i:
